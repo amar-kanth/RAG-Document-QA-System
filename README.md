@@ -84,13 +84,19 @@ Document Question Answering
 ## Folder Structure
 
 
-project/
+document-qa-rag-system
 │
-├── app.py
-├── requirements.txt
-├── data/
-├── notebooks/
-└── README.md
+app.py
+README.md
+requirements.txt
+│
+data/
+notebooks/
+examples/
+│   example_questions.txt
+│
+Dockerfile
+LICENSE
 
 
 ---
