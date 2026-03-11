@@ -1,0 +1,9 @@
+Example Questions for the Document RAG System
+
+1. What is the main topic of the document?
+2. Summarize the key concepts discussed.
+3. Explain the difference between stack and heap memory.
+4. What are the main advantages mentioned in the document?
+5. Provide a brief summary of the document.
+
+These questions can be used to test the RAG chatbot after uploading a document.

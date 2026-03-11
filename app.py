@@ -1,4 +1,21 @@
 # app.py
+# -------------------------------------------------------------
+# RAG DOCUMENT QUESTION ANSWERING SYSTEM
+#
+# This Streamlit application demonstrates a Retrieval-Augmented
+# Generation (RAG) workflow:
+#
+# 1. User uploads a document (PDF or TXT)
+# 2. Document is split into smaller text chunks
+# 3. Each chunk is converted into embeddings
+# 4. Embeddings are stored in a FAISS vector database
+# 5. When a question is asked, relevant chunks are retrieved
+# 6. Retrieved context is passed to an LLM (Gemini)
+# 7. The LLM generates a contextual answer
+#
+# This project was explored to understand how RAG systems work
+# using LangChain, vector databases, and large language models.
+# -------------------------------------------------------------
 import streamlit as st
 import os
 from dotenv import load_dotenv
@@ -276,10 +293,14 @@ def handle_document_processing(uploaded_file=""):
                     else:  # txt file
                         loader = TextLoader(tmp_file_path)
 
+                    # Load uploaded documents
                     documents = loader.load()
 
                     status_text.text("✂️ Step 3/4: Splitting into chunks...")
                     progress_bar.progress(75)
+
+                    # Split the document into smaller chunks so embeddings
+                    # can capture semantic meaning effectively
 
                     splitter = RecursiveCharacterTextSplitter(
                         chunk_size=CHUNK_SIZE,
@@ -289,8 +310,19 @@ def handle_document_processing(uploaded_file=""):
 
                     status_text.text("🧠 Step 4/4: Creating embeddings...")
                     progress_bar.progress(100)
+
+                    # Convert text chunks into vector embeddings
+                    # These embeddings will be used for similarity search
+
                     embeddings = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL)
+
+                    # Store embeddings in FAISS vector database
+                    # This enables fast similarity-based retrieval
+
                     vector_store = FAISS.from_documents(chunks, embeddings)
+                    # Create retriever to fetch top relevant document chunks
+                    # when user asks a question
+
                     retriever = vector_store.as_retriever(
                         search_type="similarity", search_kwargs={"k": RETRIEVER_K}
                     )
@@ -366,6 +398,9 @@ def handle_user_input(chat_model, input_disabled: bool = False):
         with st.chat_message("assistant"):
             with st.spinner("🤔 Analyzing document content..."):
                 try:
+
+                    # Retrieve relevant document chunks based on the user question
+                    
                     retrieved_docs = retriever.invoke(prompt)
                     if not retrieved_docs:
                         no_context_msg = "🤷‍♂️ I couldn't find relevant information in the document for your question."
